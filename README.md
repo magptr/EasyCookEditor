@@ -10,7 +10,6 @@ Traditionally, cooking assets in Unreal relies on placing the assets you want co
 
 **EasyCook Editor** solves this by letting you specify exactly which assets or folders to cook. You can:
 * Select only what you need using the content browser in editor to cook nothing extra.
-* Speed up your workflow and focus on modding, not setup.
 
 ## Installation
 1. Go to the Releases page
