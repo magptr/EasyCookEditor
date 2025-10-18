@@ -3,6 +3,8 @@ EasyCookEditor is a Unreal Editor plugin designed to make asset cooking for Unre
 
 This is the editor version of the Python GUI. It’s faster, smarter with folders, catches duplicates, and is just better all around.
 
+![preview](Resources/preview.png)
+
 # Why bother?
 Traditionally, cooking assets in Unreal relies on placing the assets you want cooked into maps, then specifying that map in the cooking process, this often results in unnecessary cooking of additional shaders, assets, and other content you don’t actually need. This wastes both time and resources.
 
