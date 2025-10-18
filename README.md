@@ -14,3 +14,38 @@ Traditionally, cooking assets in Unreal relies on placing the assets you want co
 * **Prebuilt**: A prebuilt plugin is available in Releases
 * You can build it yourself using the source if you want to make further modifications, I will not make a guide on how to build, all source included builds perfectly fine.
 
+## How to use
+### Open the EasyCook Tab
+Once the plugin is installed and enabled, open the EasyCook tab from the Unreal Editor UI. (says easycook, and has the easycook icon)
+
+### Select Items
+1. In the Content Browser, select assets and/or folders.
+2. Click **Add from Content Browser** on EasyCook to include them in the cook list.
+3. To remove entries:
+   * Click the cross icon next to an item to remove it individually.
+   * OR Click Clear All to remove all entries.
+
+### Configure Target
+1. Set the Target Platform
+2. Cultures are optional, does not need to have anything inside to cook.
+   * Click **Auto-Detect** to automatically read project culture settings.
+
+### Advanced Options
+You can toggle additional cook flags
+Optionally, add extra command-line flags in the **Extra Command Line Flags** box
+Quoted fragments are preserved and correctly escaped.
+
+### Preview and Copy
+* The Generated Command Line updates automatically as you adjust settings or add assets/folders
+* Click Copy to Clipboard to copy the full executable command and arguments, you save it for later or send it to a friend.
+
+### Run and Monitor
+* Click **Run Cook** to start the cooking process.
+* All output is streamed to the Output Log on the EasyCook window in real time.
+* Click Kill Process to stop the current cook.
+
+### Important
+* Folders are resolved recursively into packages during command generation.
+* Duplicate or overlapping items are skipped with a status message.
+* Run Cook requires at least one selected asset or folder, otherwise, an error appears in the log.
+* Extra flags are tokenized respecting quotes, and tokens with spaces or quotes are properly escaped in the final command.
