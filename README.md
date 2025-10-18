@@ -66,3 +66,6 @@ Once the plugin is installed and enabled, open the EasyCook tab from the Unreal 
 * Duplicate or overlapping items are skipped with a status message.
 * Run Cook requires at least one selected asset or folder, otherwise, an error appears in the log.
 * Extra flags are tokenized respecting quotes, and tokens with spaces or quotes are properly escaped in the final command.
+
+## Credits
+- [Trao-X](https://github.com/Trao-X) for the logo 
