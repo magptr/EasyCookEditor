@@ -39,6 +39,10 @@ private:
 	void RebuildDisplayItems();
 	void ResolveContentBrowserSelection();
 	void ResolveFolderRecursive(const FString& InPath, TSet<FString>& OutPackageNames) const;
+	bool IsPathChildOfExistingFolder(const FString& Path) const;
+	bool IsAssetInExistingFolder(const FString& AssetPackagePath) const;
+	void SetStatusMessage(const FString& Message);
+	EActiveTimerReturnType ClearStatusMessageAfterDelay(double InCurrentTime, float InDeltaTime);
 	FString BuildArgsOnlyString() const; 
 	FString BuildFullCommandLineString() const; 
 	static FString QuoteIfNeeded(const FString& In);
@@ -62,6 +66,7 @@ private:
 	TSharedPtr<SEditableTextBox> ExtraFlagsTextBox;
 	TSharedPtr<SMultiLineEditableTextBox> OutputLog;
 	TSharedPtr<SEditableTextBox> CommandPreview;
+	TSharedPtr<SMultiLineEditableTextBox> StatusMessageBox;
 
 	bool bIterate = false;
 	bool bUnversioned = false;

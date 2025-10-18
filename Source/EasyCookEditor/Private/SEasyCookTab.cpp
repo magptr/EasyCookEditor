@@ -5,7 +5,6 @@
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "ContentBrowserModule.h"
 #include "IContentBrowserSingleton.h"
-#include "ContentBrowserDelegates.h"
 #include "Modules/ModuleManager.h"
 #include "Misc/Paths.h"
 #include "Misc/ConfigCacheIni.h"
@@ -65,6 +64,19 @@ void SEasyCookTab::Construct(const FArguments& InArgs)
 					]
 				]
 
+				+ SVerticalBox::Slot().AutoHeight().Padding(4, 4, 4, 8)
+				[
+					SAssignNew(StatusMessageBox, SMultiLineEditableTextBox)
+					.IsReadOnly(true)
+					.AutoWrapText(true)
+					.Font(FCoreStyle::Get().GetFontStyle("SmallFont"))
+					.Visibility_Lambda([this]() 
+					{ 
+						return (StatusMessageBox.IsValid() && !StatusMessageBox->GetText().IsEmpty()) 
+							? EVisibility::Visible 
+							: EVisibility::Collapsed; 
+					})
+				]
 
 				+ SVerticalBox::Slot().AutoHeight().Padding(4, 0, 4, 8)
 				[
@@ -466,6 +478,84 @@ void SEasyCookTab::ResolveFolderRecursive(const FString& InPath, TSet<FString>& 
 	}
 }
 
+bool SEasyCookTab::IsPathChildOfExistingFolder(const FString& Path) const
+{
+	FString NormalizedPath = Path;
+	if (!NormalizedPath.EndsWith(TEXT("/")))
+	{
+		NormalizedPath += TEXT("/");
+	}
+
+	for (const FString& ExistingFolder : SelectedFolders)
+	{
+		FString NormalizedExisting = ExistingFolder;
+		if (!NormalizedExisting.EndsWith(TEXT("/")))
+		{
+			NormalizedExisting += TEXT("/");
+		}
+
+		if (NormalizedPath.StartsWith(NormalizedExisting) && NormalizedPath != NormalizedExisting)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool SEasyCookTab::IsAssetInExistingFolder(const FString& AssetPackagePath) const
+{
+	FString AssetFolder = AssetPackagePath;
+	int32 LastSlashIndex;
+	if (AssetFolder.FindLastChar(TEXT('/'), LastSlashIndex))
+	{
+		AssetFolder = AssetFolder.Left(LastSlashIndex);
+	}
+
+	for (const FString& ExistingFolder : SelectedFolders)
+	{
+		FString NormalizedExisting = ExistingFolder;
+		if (!NormalizedExisting.EndsWith(TEXT("/")))
+		{
+			NormalizedExisting += TEXT("/");
+		}
+
+		FString NormalizedAssetFolder = AssetFolder;
+		if (!NormalizedAssetFolder.EndsWith(TEXT("/")))
+		{
+			NormalizedAssetFolder += TEXT("/");
+		}
+
+		if (NormalizedAssetFolder.StartsWith(NormalizedExisting))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void SEasyCookTab::SetStatusMessage(const FString& Message)
+{
+	if (StatusMessageBox.IsValid())
+	{
+		StatusMessageBox->SetText(FText::FromString(Message));
+		
+		if (!Message.IsEmpty())
+		{
+			RegisterActiveTimer(3.0f, FWidgetActiveTimerDelegate::CreateSP(this, &SEasyCookTab::ClearStatusMessageAfterDelay));
+		}
+	}
+}
+
+EActiveTimerReturnType SEasyCookTab::ClearStatusMessageAfterDelay(double InCurrentTime, float InDeltaTime)
+{
+	if (StatusMessageBox.IsValid())
+	{
+		StatusMessageBox->SetText(FText());
+	}
+	return EActiveTimerReturnType::Stop;
+}
 
 void SEasyCookTab::RebuildDisplayItems()
 {
@@ -526,20 +616,161 @@ void SEasyCookTab::RebuildDisplayItems()
 
 void SEasyCookTab::ResolveContentBrowserSelection()
 {
-	
 	FContentBrowserModule& CBM = FModuleManager::LoadModuleChecked<FContentBrowserModule>("ContentBrowser");
 	TArray<FAssetData> Assets;
 	CBM.Get().GetSelectedAssets(Assets);
 	TArray<FString> Paths;
 	CBM.Get().GetSelectedFolders(Paths);
-
-	for (const FAssetData& AD : Assets)
+	
+	if (StatusMessageBox.IsValid())
 	{
-		SelectedAssetPackages.Add(AD.PackageName.ToString());
+		StatusMessageBox->SetText(FText());
 	}
+
+	TArray<FString> SkippedItems;
+	int32 AddedCount = 0;
+	
 	for (const FString& P : Paths)
 	{
+		if (SelectedFolders.Contains(P))
+		{
+			SkippedItems.Add(FString::Printf(TEXT("Folder '%s' is already selected"), *P));
+			continue;
+		}
+		
+		if (IsPathChildOfExistingFolder(P))
+		{
+
+			FString ParentFolder;
+			FString NormalizedP = P;
+			if (!NormalizedP.EndsWith(TEXT("/")))
+			{
+				NormalizedP += TEXT("/");
+			}
+
+			for (const FString& ExistingFolder : SelectedFolders)
+			{
+				FString NormalizedExisting = ExistingFolder;
+				if (!NormalizedExisting.EndsWith(TEXT("/")))
+				{
+					NormalizedExisting += TEXT("/");
+				}
+
+				if (NormalizedP.StartsWith(NormalizedExisting))
+				{
+					ParentFolder = ExistingFolder;
+					break;
+				}
+			}
+
+			SkippedItems.Add(FString::Printf(TEXT("Folder '%s' is already covered by parent folder '%s'"), *P, *ParentFolder));
+			continue;
+		}
+		
+		bool bHasChildFolders = false;
+		TArray<FString> ChildFolders;
+		FString NormalizedP = P;
+		if (!NormalizedP.EndsWith(TEXT("/")))
+		{
+			NormalizedP += TEXT("/");
+		}
+
+		for (const FString& ExistingFolder : SelectedFolders)
+		{
+			FString NormalizedExisting = ExistingFolder;
+			if (!NormalizedExisting.EndsWith(TEXT("/")))
+			{
+				NormalizedExisting += TEXT("/");
+			}
+
+			if (NormalizedExisting.StartsWith(NormalizedP) && NormalizedExisting != NormalizedP)
+			{
+				bHasChildFolders = true;
+				ChildFolders.Add(ExistingFolder);
+			}
+		}
+		
+		if (bHasChildFolders)
+		{
+			for (const FString& ChildFolder : ChildFolders)
+			{
+				SelectedFolders.Remove(ChildFolder);
+			}
+		}
+		
 		SelectedFolders.Add(P);
+		AddedCount++;
+	}
+	
+	for (const FAssetData& AD : Assets)
+	{
+		const FString PackageName = AD.PackageName.ToString();
+		
+		if (SelectedAssetPackages.Contains(PackageName))
+		{
+			SkippedItems.Add(FString::Printf(TEXT("Asset '%s' is already selected"), *PackageName));
+			continue;
+		}
+		
+		if (IsAssetInExistingFolder(PackageName))
+		{
+			FString ParentFolder;
+			FString AssetFolder = PackageName;
+			int32 LastSlashIndex;
+			if (AssetFolder.FindLastChar(TEXT('/'), LastSlashIndex))
+			{
+				AssetFolder = AssetFolder.Left(LastSlashIndex);
+			}
+
+			for (const FString& ExistingFolder : SelectedFolders)
+			{
+				FString NormalizedExisting = ExistingFolder;
+				if (!NormalizedExisting.EndsWith(TEXT("/")))
+				{
+					NormalizedExisting += TEXT("/");
+				}
+
+				FString NormalizedAssetFolder = AssetFolder;
+				if (!NormalizedAssetFolder.EndsWith(TEXT("/")))
+				{
+					NormalizedAssetFolder += TEXT("/");
+				}
+
+				if (NormalizedAssetFolder.StartsWith(NormalizedExisting))
+				{
+					ParentFolder = ExistingFolder;
+					break;
+				}
+			}
+
+			SkippedItems.Add(FString::Printf(TEXT("Asset '%s' is already covered by folder '%s'"), *PackageName, *ParentFolder));
+			continue;
+		}
+		
+		SelectedAssetPackages.Add(PackageName);
+		AddedCount++;
+	}
+	
+	if (SkippedItems.Num() > 0)
+	{
+		FString StatusMessage = FString::Printf(TEXT("⚠ Added %d item(s), skipped %d duplicate(s):\n\n"), AddedCount, SkippedItems.Num());
+		
+		const int32 MaxDisplayItems = 10;
+		for (int32 i = 0; i < FMath::Min(SkippedItems.Num(), MaxDisplayItems); ++i)
+		{
+			StatusMessage += TEXT("• ") + SkippedItems[i] + TEXT("\n");
+		}
+		
+		if (SkippedItems.Num() > MaxDisplayItems)
+		{
+			StatusMessage += FString::Printf(TEXT("... and %d more item(s)\n"), SkippedItems.Num() - MaxDisplayItems);
+		}
+
+		SetStatusMessage(StatusMessage);
+	}
+	else if (AddedCount > 0)
+	{
+		SetStatusMessage(FString::Printf(TEXT("✓ Successfully added %d item(s)"), AddedCount));
 	}
 }
 
