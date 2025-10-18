@@ -1,4 +1,4 @@
-# EasyCookEditor
+# <img src="Resources/icon128.png" alt="Logo" width="40"> EasyCookEditor
 EasyCookEditor is a Unreal Editor plugin designed to make asset cooking for Unreal Engine 4 easier, primarily for modding purposes, with a focus on cooked asset projects.
 
 This is the editor version of the Python GUI. It’s faster, smarter with folders, catches duplicates, and is just better all around.
@@ -10,7 +10,6 @@ Traditionally, cooking assets in Unreal relies on placing the assets you want co
 
 **EasyCook Editor** solves this by letting you specify exactly which assets or folders to cook. You can:
 * Select only what you need using the content browser in editor to cook nothing extra.
-* Speed up your workflow and focus on modding, not setup.
 
 ## Installation
 1. Go to the Releases page
@@ -48,9 +47,9 @@ Once the plugin is installed and enabled, open the EasyCook tab from the Unreal 
    * Click **Auto-Detect** to automatically read project culture settings.
 
 ### Advanced Options
-You can toggle additional cook flags
-Optionally, add extra command-line flags in the **Extra Command Line Flags** box
-Quoted fragments are preserved and correctly escaped.
+* You can toggle additional cook flags, the most commonly used ones are included as checkboxes. but....
+* Optionally, add extra command-line flags in the **Extra Command Line Flags** box
+* Quoted fragments are preserved and correctly escaped.
 
 ### Preview and Copy
 * The Generated Command Line updates automatically as you adjust settings or add assets/folders
@@ -62,7 +61,10 @@ Quoted fragments are preserved and correctly escaped.
 * Click Kill Process to stop the current cook.
 
 ### Important
-* Folders are resolved recursively into packages during command generation.
+* Folders are resolved recursively into packages during command generation. (this can sometimes be resource intensive on folders that contain a lot of assets)
 * Duplicate or overlapping items are skipped with a status message.
 * Run Cook requires at least one selected asset or folder, otherwise, an error appears in the log.
 * Extra flags are tokenized respecting quotes, and tokens with spaces or quotes are properly escaped in the final command.
+
+## Credits
+- [Trao-X](https://github.com/Trao-X) for the logo 
