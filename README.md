@@ -1,4 +1,4 @@
-![preview](Resources/ButtonIcon_40x.png) # EasyCookEditor
+# <img src="Resources/ButtonIcon_40x.png" alt="Logo" width="30" style="vertical-align: middle;"> EasyCookEditor
 EasyCookEditor is a Unreal Editor plugin designed to make asset cooking for Unreal Engine 4 easier, primarily for modding purposes, with a focus on cooked asset projects.
 
 This is the editor version of the Python GUI. It’s faster, smarter with folders, catches duplicates, and is just better all around.
