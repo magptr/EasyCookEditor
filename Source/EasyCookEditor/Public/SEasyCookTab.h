@@ -35,9 +35,6 @@ private:
 
 	TSharedRef<ITableRow> OnGenerateRowForList(TSharedPtr<FEasyCookItem> InItem, const TSharedRef<STableViewBase>& OwnerTable);
 	
-	void OnAssetSelectedFromPicker(const FAssetData& SelectedAsset);
-	void OnFolderPicked(const FString& Path);
-	
 	void RefreshCommandPreview();
 	void RebuildDisplayItems();
 	void ResolveContentBrowserSelection();

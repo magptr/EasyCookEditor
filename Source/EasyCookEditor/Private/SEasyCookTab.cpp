@@ -65,58 +65,6 @@ void SEasyCookTab::Construct(const FArguments& InArgs)
 					]
 				]
 
-				+ SVerticalBox::Slot().AutoHeight().Padding(4, 0, 4, 8)
-				[
-					SNew(SExpandableArea)
-					.AreaTitle(LOCTEXT("BrowseArea", "Browse Assets & Folders"))
-					.InitiallyCollapsed(true)
-					.Padding(4)
-					.BodyContent()
-					[
-						SNew(SVerticalBox)
-						+ SVerticalBox::Slot().AutoHeight().Padding(0, 4)
-						[
-							SNew(STextBlock)
-							.Text(LOCTEXT("AssetPickerLabel", "Asset Picker (click to add)"))
-							.Font(FCoreStyle::Get().GetFontStyle("SmallFont"))
-						]
-						+ SVerticalBox::Slot().AutoHeight().Padding(0, 2, 0, 8)
-						[
-							SNew(SBox)
-							.HeightOverride(280)
-							[
-								FModuleManager::LoadModuleChecked<FContentBrowserModule>("ContentBrowser").Get().CreateAssetPicker([this](){
-									FAssetPickerConfig Config;
-									Config.SelectionMode = ESelectionMode::Multi;
-									Config.bAllowDragging = false;
-									Config.InitialAssetViewType = EAssetViewType::Tile;
-									Config.OnAssetSelected = FOnAssetSelected::CreateSP(this, &SEasyCookTab::OnAssetSelectedFromPicker);
-									return Config;
-								}())
-							]
-						]
-						+ SVerticalBox::Slot().AutoHeight().Padding(0, 4)
-						[
-							SNew(STextBlock)
-							.Text(LOCTEXT("FolderPickerLabel", "Folder Picker (click to add)"))
-							.Font(FCoreStyle::Get().GetFontStyle("SmallFont"))
-						]
-						+ SVerticalBox::Slot().AutoHeight().Padding(0, 2)
-						[
-							SNew(SBox)
-							.HeightOverride(280)
-							[
-								FModuleManager::LoadModuleChecked<FContentBrowserModule>("ContentBrowser").Get().CreatePathPicker([this](){
-									FPathPickerConfig PathConfig;
-									PathConfig.DefaultPath = TEXT("/Game");
-									PathConfig.bAllowContextMenu = true;
-									PathConfig.OnPathSelected = FOnPathSelected::CreateSP(this, &SEasyCookTab::OnFolderPicked);
-									return PathConfig;
-								}())
-							]
-						]
-					]
-				]
 
 				+ SVerticalBox::Slot().AutoHeight().Padding(4, 0, 4, 8)
 				[
@@ -518,45 +466,6 @@ void SEasyCookTab::ResolveFolderRecursive(const FString& InPath, TSet<FString>& 
 	}
 }
 
-void SEasyCookTab::OnAssetSelectedFromPicker(const FAssetData& SelectedAsset)
-{
-	if (SelectedAsset.IsValid())
-	{
-		const FString NewPkg = SelectedAsset.PackageName.ToString();
-		SelectedAssetPackages.Add(NewPkg);
-		RebuildDisplayItems();
-		RefreshCommandPreview();
-		if (SelectedListView.IsValid())
-		{
-			for (const TSharedPtr<FEasyCookItem>& Item : DisplayItems)
-			{
-				if (!Item->bIsFolder && Item->Name == NewPkg)
-				{
-					SelectedListView->RequestScrollIntoView(Item);
-					break;
-				}
-			}
-		}
-	}
-}
-
-void SEasyCookTab::OnFolderPicked(const FString& Path)
-{
-	SelectedFolders.Add(Path);
-	RebuildDisplayItems();
-	RefreshCommandPreview();
-	if (SelectedListView.IsValid())
-	{
-		for (const TSharedPtr<FEasyCookItem>& Item : DisplayItems)
-		{
-			if (Item->bIsFolder && Item->Name == Path)
-			{
-				SelectedListView->RequestScrollIntoView(Item);
-				break;
-			}
-		}
-	}
-}
 
 void SEasyCookTab::RebuildDisplayItems()
 {
@@ -617,9 +526,7 @@ void SEasyCookTab::RebuildDisplayItems()
 
 void SEasyCookTab::ResolveContentBrowserSelection()
 {
-	SelectedAssetPackages.Reset();
-	SelectedFolders.Reset();
-
+	
 	FContentBrowserModule& CBM = FModuleManager::LoadModuleChecked<FContentBrowserModule>("ContentBrowser");
 	TArray<FAssetData> Assets;
 	CBM.Get().GetSelectedAssets(Assets);
