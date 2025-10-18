@@ -172,7 +172,7 @@ void SEasyCookTab::Construct(const FArguments& InArgs)
 				[
 					SNew(SExpandableArea)
 					.AreaTitle(LOCTEXT("AdvancedOptions", "Advanced Cook Options"))
-					.InitiallyCollapsed(false)
+					.InitiallyCollapsed(true)
 					.Padding(8)
 					.BodyContent()
 					[
