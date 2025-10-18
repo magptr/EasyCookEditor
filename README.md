@@ -48,9 +48,9 @@ Once the plugin is installed and enabled, open the EasyCook tab from the Unreal 
    * Click **Auto-Detect** to automatically read project culture settings.
 
 ### Advanced Options
-You can toggle additional cook flags
-Optionally, add extra command-line flags in the **Extra Command Line Flags** box
-Quoted fragments are preserved and correctly escaped.
+* You can toggle additional cook flags, the most commonly used ones are included as checkboxes. but....
+* Optionally, add extra command-line flags in the **Extra Command Line Flags** box
+* Quoted fragments are preserved and correctly escaped.
 
 ### Preview and Copy
 * The Generated Command Line updates automatically as you adjust settings or add assets/folders
