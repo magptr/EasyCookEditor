@@ -28,7 +28,7 @@ Traditionally, cooking assets in Unreal relies on placing the assets you want co
 6. Open the Plugins window and ensure EasyCook is enabled.
 7. After enabling, you can access the plugin from the EasyCook tab in the editor.
 
-You can build it yourself using the source if you want to make further modifications, I will not make a guide on how to build, all source included builds perfectly fine.
+This plugin is prebuilt for Unreal Engine 4.27 only. If you’d like to modify it or use it with a different engine version, you can build it yourself from the included source code. I won’t be providing a build guide, as the included source compiles successfully without issues.
 
 ## How to use
 ### Open the EasyCook Tab
