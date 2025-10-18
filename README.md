@@ -62,7 +62,7 @@ Once the plugin is installed and enabled, open the EasyCook tab from the Unreal 
 * Click Kill Process to stop the current cook.
 
 ### Important
-* Folders are resolved recursively into packages during command generation.
+* Folders are resolved recursively into packages during command generation. (this can sometimes be resource intensive on folders that contain a lot of assets)
 * Duplicate or overlapping items are skipped with a status message.
 * Run Cook requires at least one selected asset or folder, otherwise, an error appears in the log.
 * Extra flags are tokenized respecting quotes, and tokens with spaces or quotes are properly escaped in the final command.
