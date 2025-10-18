@@ -10,9 +10,24 @@ Traditionally, cooking assets in Unreal relies on placing the assets you want co
 * Select only what you need using the content browser in editor to cook nothing extra.
 * Speed up your workflow and focus on modding, not setup.
 
-# Installation
-* **Prebuilt**: A prebuilt plugin is available in Releases
-* You can build it yourself using the source if you want to make further modifications, I will not make a guide on how to build, all source included builds perfectly fine.
+## Installation
+1. Go to the Releases page
+2. Download the latest `.zip` release.
+3. Extract the zip, inside you’ll find an `EasyCook` folder containing the plugin files.
+4. Move the `EasyCook` folder to one of the following locations:
+   * **Project Plugin (recommended):**
+     ```
+     <YourProject>/Plugins/EasyCook/
+     ```
+   * **Engine Plugin (for all projects):**
+     ```
+     <YourEngine>/Engine/Plugins/EasyCook/
+     ```
+5. Launch (or restart) Unreal Engine.
+6. Open the Plugins window and ensure EasyCook is enabled.
+7. After enabling, you can access the plugin from the EasyCook tab in the editor.
+
+You can build it yourself using the source if you want to make further modifications, I will not make a guide on how to build, all source included builds perfectly fine.
 
 ## How to use
 ### Open the EasyCook Tab
