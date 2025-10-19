@@ -1,0 +1,24 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "EasyCook Editor",
+	"Description": "Designed to make asset cooking for Unreal Engine 4 easier, primarily for modding purposes, with a focus on cooked asset projects.",
+	"Category": "Other",
+	"CreatedBy": "mag",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": false,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "EasyCookEditor",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		}
+	]
+}
